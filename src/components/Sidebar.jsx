@@ -1,36 +1,55 @@
 import { NavLink } from "react-router-dom";
 
-export default function Sidebar({ items, settings }) {
+export default function Sidebar({ items, settings, isMobileOpen = false, onClose }) {
   return (
-    <aside className="sidebar">
-      <div className="brand">
-        <div className="brand-logo brand-logo-text">{settings.logoText || "Neguinho Acessórios"}</div>
-        <div>
-          <h1>{settings.shopName}</h1>
-          <p>Sistema demonstrativo personalizado</p>
+    <>
+      <button
+        type="button"
+        className={`sidebar-backdrop${isMobileOpen ? " is-open" : ""}`}
+        onClick={onClose}
+        aria-label="Fechar menu"
+      />
+
+      <aside className={`sidebar${isMobileOpen ? " is-open" : ""}`}>
+        <div className="sidebar-mobile-head">
+          <span>Menu</span>
+          <button type="button" className="mobile-close-button" onClick={onClose}>
+            Fechar
+          </button>
         </div>
-      </div>
 
-      <nav className="sidebar-nav">
-        {items.map((item) => (
-          <NavLink
-            key={item.path}
-            to={item.path}
-            className={({ isActive }) => `sidebar-link${isActive ? " active" : ""}`}
-          >
-            <span className="icon-wrap">{item.icon}</span>
-            <span>
-              <strong>{item.label}</strong>
-              <small>{item.caption}</small>
-            </span>
-          </NavLink>
-        ))}
-      </nav>
+        <div className="brand">
+          <div className="brand-logo brand-logo-text">
+            {settings.logoText || "Neguinho Acessórios"}
+          </div>
+          <div>
+            <h1>{settings.shopName}</h1>
+            <p>Sistema demonstrativo personalizado</p>
+          </div>
+        </div>
 
-      <div className="sidebar-card">
-        <span className="kicker">Pronto para apresentar</span>
-        <strong>Fluxo completo de oficina, estoque, financeiro e relatórios.</strong>
-      </div>
-    </aside>
+        <nav className="sidebar-nav">
+          {items.map((item) => (
+            <NavLink
+              key={item.path}
+              to={item.path}
+              className={({ isActive }) => `sidebar-link${isActive ? " active" : ""}`}
+              onClick={onClose}
+            >
+              <span className="icon-wrap">{item.icon}</span>
+              <span>
+                <strong>{item.label}</strong>
+                <small>{item.caption}</small>
+              </span>
+            </NavLink>
+          ))}
+        </nav>
+
+        <div className="sidebar-card">
+          <span className="kicker">Pronto para apresentar</span>
+          <strong>Fluxo completo de oficina, estoque, financeiro e relatórios.</strong>
+        </div>
+      </aside>
+    </>
   );
 }

@@ -77,6 +77,7 @@ export default function App() {
   const [printQuote, setPrintQuote] = useState(null);
   const [printOrder, setPrintOrder] = useState(null);
   const [hasAccess, setHasAccess] = useState(() => window.localStorage.getItem(ACCESS_KEY) === "1");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -91,6 +92,10 @@ export default function App() {
   useEffect(() => {
     const pageName = titles[location.pathname]?.[0] || "Neguinho Acessórios";
     document.title = `${pageName} | Neguinho Acessórios`;
+  }, [location.pathname]);
+
+  useEffect(() => {
+    setMobileMenuOpen(false);
   }, [location.pathname]);
 
   const helpers = useMemo(() => {
@@ -539,8 +544,31 @@ export default function App() {
           path="*"
           element={
             <div className="app-shell">
-              <Sidebar items={navItems} settings={db.settings} />
+              <Sidebar
+                items={navItems}
+                settings={db.settings}
+                isMobileOpen={mobileMenuOpen}
+                onClose={() => setMobileMenuOpen(false)}
+              />
+
               <main className="main-shell">
+                <div className="mobile-topbar">
+                  <div className="mobile-topbar-brand">
+                    <strong>Neguinho Acessórios</strong>
+                    <span>Sistema de gestão</span>
+                  </div>
+                  <button
+                    type="button"
+                    className="mobile-menu-button"
+                    onClick={() => setMobileMenuOpen(true)}
+                    aria-label="Abrir menu"
+                  >
+                    <span />
+                    <span />
+                    <span />
+                  </button>
+                </div>
+
                 <Header
                   title={title}
                   subtitle={subtitle}
