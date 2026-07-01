@@ -5,6 +5,25 @@ import StatusBadge from "../components/StatusBadge.jsx";
 import { Icons } from "../components/icons.jsx";
 import { formatCurrency, formatDate } from "../utils/formatters.js";
 
+function RankingBlock({ title, items, formatter = (value) => value }) {
+  return (
+    <div className="ranking-block">
+      <h4>{title}</h4>
+      <div className="ranking-list">
+        {items.map((item, index) => (
+          <div key={item.name} className="ranking-row premium">
+            <div>
+              <span>{item.name}</span>
+              <small>Posicao {index + 1}</small>
+            </div>
+            <strong>{formatter(item.quantity ?? item.amount)}</strong>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function DashboardPage({ db, analytics, helpers }) {
   const topProducts = analytics.topProducts.slice(0, 4);
   const topServices = analytics.topServices.slice(0, 4);
@@ -12,6 +31,36 @@ export default function DashboardPage({ db, analytics, helpers }) {
 
   return (
     <div className="page-stack">
+      <section className="dashboard-hero">
+        <div className="dashboard-hero-copy">
+          <span className="kicker">Visao executiva</span>
+          <h3>Painel gerencial pronto para impressionar durante a demonstracao.</h3>
+          <p>
+            Acompanhamento instantaneo de faturamento, producao da oficina, estoque,
+            agenda e comportamento comercial da operacao.
+          </p>
+        </div>
+
+        <div className="dashboard-hero-strip">
+          <div className="hero-stat">
+            <span>Clientes ativos</span>
+            <strong>{db.customers.length}</strong>
+          </div>
+          <div className="hero-stat">
+            <span>Motos cadastradas</span>
+            <strong>{db.bikes.length}</strong>
+          </div>
+          <div className="hero-stat">
+            <span>Itens no estoque</span>
+            <strong>{db.inventory.length}</strong>
+          </div>
+          <div className="hero-stat">
+            <span>Vendas registradas</span>
+            <strong>{db.sales.length}</strong>
+          </div>
+        </div>
+      </section>
+
       <div className="metrics-grid">
         <MetricCard icon={Icons.finance} label="Faturamento diario" value={formatCurrency(analytics.dailyRevenue)} helper="Entradas do dia" />
         <MetricCard icon={Icons.finance} label="Faturamento semanal" value={formatCurrency(analytics.weeklyRevenue)} helper="Entradas na semana" tone="blue" />
@@ -28,12 +77,10 @@ export default function DashboardPage({ db, analytics, helpers }) {
           {db.orders.length ? (
             <div className="stack-list">
               {db.orders.slice(0, 5).map((order) => (
-                <article key={order.id} className="timeline-card">
+                <article key={order.id} className="timeline-card premium">
                   <div>
                     <strong>{order.service}</strong>
-                    <p>
-                      {helpers.customerName(order.customerId)} · {helpers.bikeName(order.bikeId)}
-                    </p>
+                    <p>{helpers.customerName(order.customerId)} - {helpers.bikeName(order.bikeId)}</p>
                     <small>{formatDate(order.entryDate)}</small>
                   </div>
                   <div className="timeline-side">
@@ -52,7 +99,7 @@ export default function DashboardPage({ db, analytics, helpers }) {
           {db.quotes.length ? (
             <div className="stack-list">
               {db.quotes.slice(0, 5).map((quote) => (
-                <article key={quote.id} className="timeline-card">
+                <article key={quote.id} className="timeline-card premium">
                   <div>
                     <strong>{helpers.customerName(quote.customerId)}</strong>
                     <p>{quote.serviceDescription}</p>
@@ -75,24 +122,25 @@ export default function DashboardPage({ db, analytics, helpers }) {
         <Panel title="Alertas importantes" description="Pontos que chamam a atencao do cliente na apresentacao.">
           <div className="alert-list">
             {analytics.lowStockProducts.map((item) => (
-              <div key={item.id} className="alert-row warning">
+              <div key={item.id} className="alert-row warning premium">
                 <strong>Estoque baixo</strong>
-                <p>
-                  {item.name}: {item.quantity} em estoque, minimo recomendado {item.minStock}.
-                </p>
+                <p>{item.name}: {item.quantity} em estoque, minimo recomendado {item.minStock}.</p>
               </div>
             ))}
+
             {!analytics.lowStockProducts.length && (
-              <div className="alert-row success">
+              <div className="alert-row success premium">
                 <strong>Estoque sob controle</strong>
                 <p>Nenhum item critico no momento.</p>
               </div>
             )}
-            <div className="alert-row info">
+
+            <div className="alert-row info premium">
               <strong>Agenda dos proximos dias</strong>
               <p>{analytics.upcomingSchedule} servicos agendados para os proximos 7 dias.</p>
             </div>
-            <div className="alert-row info">
+
+            <div className="alert-row info premium">
               <strong>Clientes ativos</strong>
               <p>{db.customers.length} clientes com historico navegavel e motos vinculadas.</p>
             </div>
@@ -100,34 +148,10 @@ export default function DashboardPage({ db, analytics, helpers }) {
         </Panel>
 
         <Panel title="Ranking de vendas e recorrencia" description="Resumo visual para mostrar inteligencia do sistema.">
-          <div className="ranking-grid">
-            <div>
-              <h4>Produtos mais vendidos</h4>
-              {topProducts.map((item) => (
-                <div key={item.name} className="ranking-row">
-                  <span>{item.name}</span>
-                  <strong>{item.quantity}</strong>
-                </div>
-              ))}
-            </div>
-            <div>
-              <h4>Servicos mais vendidos</h4>
-              {topServices.map((item) => (
-                <div key={item.name} className="ranking-row">
-                  <span>{item.name}</span>
-                  <strong>{item.quantity}</strong>
-                </div>
-              ))}
-            </div>
-            <div>
-              <h4>Clientes que mais compram</h4>
-              {topCustomers.map((item) => (
-                <div key={item.name} className="ranking-row">
-                  <span>{item.name}</span>
-                  <strong>{formatCurrency(item.amount)}</strong>
-                </div>
-              ))}
-            </div>
+          <div className="ranking-grid premium">
+            <RankingBlock title="Produtos mais vendidos" items={topProducts} />
+            <RankingBlock title="Servicos mais vendidos" items={topServices} />
+            <RankingBlock title="Clientes que mais compram" items={topCustomers} formatter={formatCurrency} />
           </div>
         </Panel>
       </div>

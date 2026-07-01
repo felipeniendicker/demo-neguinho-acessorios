@@ -10,7 +10,7 @@ const paymentOptions = ["Dinheiro", "PIX", "Cartao", "Credito"];
 
 export default function PdvPage({ db, onCheckout }) {
   const [search, setSearch] = useState("");
-  const [customerName, setCustomerName] = useState("Cliente de balcão");
+  const [customerName, setCustomerName] = useState("Cliente de balcao");
   const [discount, setDiscount] = useState("0");
   const [paymentMethod, setPaymentMethod] = useState("PIX");
   const [cart, setCart] = useState([]);
@@ -100,7 +100,7 @@ export default function PdvPage({ db, onCheckout }) {
     }
 
     onCheckout({
-      customerName: customerName.trim() || "Cliente de balcão",
+      customerName: customerName.trim() || "Cliente de balcao",
       paymentMethod,
       subtotal,
       discount: discountValue,
@@ -116,7 +116,7 @@ export default function PdvPage({ db, onCheckout }) {
 
     setCart([]);
     setDiscount("0");
-    setCustomerName("Cliente de balcão");
+    setCustomerName("Cliente de balcao");
     setPaymentMethod("PIX");
     setSearch("");
   }
@@ -125,13 +125,13 @@ export default function PdvPage({ db, onCheckout }) {
     <div className="page-stack">
       <div className="metrics-grid compact">
         <MetricCard icon={Icons.pdv} label="Vendas hoje" value={todaySales.length} helper="Cupons emitidos no dia" tone="blue" />
-        <MetricCard icon={Icons.finance} label="Faturamento hoje" value={formatCurrency(salesTodayValue)} helper="Receita do balcão" tone="green" />
+        <MetricCard icon={Icons.finance} label="Faturamento hoje" value={formatCurrency(salesTodayValue)} helper="Receita do balcao" tone="green" />
         <MetricCard icon={Icons.reports} label="Ticket medio" value={formatCurrency(averageTicket)} helper="Media por venda" />
         <MetricCard
           icon={Icons.inventory}
           label="Ultima venda"
           value={lastSale ? formatCurrency(lastSale.total) : "--"}
-          helper={lastSale ? `${lastSale.number} • ${lastSale.paymentMethod}` : "Sem vendas registradas"}
+          helper={lastSale ? `${lastSale.number} - ${lastSale.paymentMethod}` : "Sem vendas registradas"}
           tone="red"
         />
       </div>
@@ -145,7 +145,7 @@ export default function PdvPage({ db, onCheckout }) {
               className="search-input"
               value={search}
               onChange={(event) => setSearch(event.target.value)}
-              placeholder="Pesquisar peça ou produto"
+              placeholder="Pesquisar peca ou produto"
             />
           }
         >
@@ -155,25 +155,29 @@ export default function PdvPage({ db, onCheckout }) {
                 const unavailable = Number(product.quantity || 0) <= 0;
 
                 return (
-                  <button
-                    key={product.id}
-                    type="button"
-                    className={`pdv-product-card${unavailable ? " disabled" : ""}`}
-                    onClick={() => addToCart(product)}
-                    disabled={unavailable}
-                  >
-                    <div className="pdv-product-head">
+                  <article key={product.id} className={`pdv-product-card${unavailable ? " disabled" : ""}`}>
+                    <div className="pdv-product-meta">
                       <strong>{product.name}</strong>
+                      <p>{product.category}</p>
+                      <small>SKU {product.sku}</small>
+                    </div>
+
+                    <div className="pdv-product-footline">
                       <span className={`stock-pill${Number(product.quantity) <= Number(product.minStock) ? " low" : ""}`}>
                         {product.quantity} em estoque
                       </span>
-                    </div>
-                    <p>{product.category} • SKU {product.sku}</p>
-                    <div className="pdv-product-footer">
                       <strong>{formatCurrency(product.salePrice)}</strong>
-                      <span>{unavailable ? "Sem saldo" : "Adicionar ao carrinho"}</span>
                     </div>
-                  </button>
+
+                    <button
+                      type="button"
+                      className="primary-button full-button"
+                      onClick={() => addToCart(product)}
+                      disabled={unavailable}
+                    >
+                      {unavailable ? "Sem saldo" : "Adicionar ao carrinho"}
+                    </button>
+                  </article>
                 );
               })
             ) : (
@@ -182,56 +186,58 @@ export default function PdvPage({ db, onCheckout }) {
           </div>
         </Panel>
 
-        <div className="page-stack">
-          <Panel title="Carrinho" description="Itens da venda com controle rapido de quantidade.">
-            {cart.length ? (
-              <div className="cart-list">
-                {cart.map((item) => (
-                  <article key={item.inventoryId} className="cart-item">
-                    <div className="cart-item-main">
-                      <strong>{item.name}</strong>
-                      <span>{formatCurrency(item.unitPrice)} cada</span>
+        <Panel title="Carrinho" description="Itens da venda com controle rapido de quantidade.">
+          {cart.length ? (
+            <div className="cart-list">
+              {cart.map((item) => (
+                <article key={item.inventoryId} className="cart-item">
+                  <div className="cart-item-main">
+                    <strong>{item.name}</strong>
+                    <span>{formatCurrency(item.unitPrice)} cada</span>
+                  </div>
+
+                  <div className="cart-item-actions">
+                    <div className="qty-controls">
+                      <button type="button" className="small-button" onClick={() => updateQuantity(item.inventoryId, -1)}>-</button>
+                      <strong>{item.quantity}</strong>
+                      <button type="button" className="small-button" onClick={() => updateQuantity(item.inventoryId, 1)}>+</button>
                     </div>
-                    <div className="cart-item-side">
-                      <div className="qty-controls">
-                        <button type="button" className="small-button" onClick={() => updateQuantity(item.inventoryId, -1)}>-</button>
-                        <strong>{item.quantity}</strong>
-                        <button type="button" className="small-button" onClick={() => updateQuantity(item.inventoryId, 1)}>+</button>
-                      </div>
+
+                    <div className="cart-subtotal">
+                      <span>Subtotal</span>
                       <strong>{formatCurrency(item.subtotal)}</strong>
-                      <button type="button" className="ghost-button" onClick={() => removeItem(item.inventoryId)}>Remover</button>
                     </div>
-                  </article>
-                ))}
 
-                <div className="cart-total-row">
-                  <span>Total geral</span>
-                  <strong>{formatCurrency(total)}</strong>
-                </div>
+                    <button type="button" className="ghost-button" onClick={() => removeItem(item.inventoryId)}>
+                      Excluir
+                    </button>
+                  </div>
+                </article>
+              ))}
+
+              <div className="cart-total-row">
+                <span>Total geral</span>
+                <strong>{formatCurrency(total)}</strong>
               </div>
-            ) : (
-              <EmptyState title="Carrinho vazio" description="Toque em um produto para simular a venda no balcão." />
-            )}
-          </Panel>
+            </div>
+          ) : (
+            <EmptyState title="Carrinho vazio" description="Toque em um produto para simular a venda no balcao." />
+          )}
+        </Panel>
 
-          <Panel title="Resumo da venda" description="Fechamento rapido com forma de pagamento.">
-            <div className="pdv-summary">
-              <label>
-                Cliente
-                <input value={customerName} onChange={(event) => setCustomerName(event.target.value)} placeholder="Nome do cliente ou Cliente de balcão" />
-              </label>
+        <Panel title="Resumo da venda" description="Fechamento rapido com forma de pagamento.">
+          <div className="pdv-summary">
+            <label>
+              Cliente
+              <input
+                value={customerName}
+                onChange={(event) => setCustomerName(event.target.value)}
+                placeholder="Nome do cliente ou Cliente de balcao"
+              />
+            </label>
 
-              <label>
-                Desconto
-                <input type="number" min="0" step="0.01" value={discount} onChange={(event) => setDiscount(event.target.value)} />
-              </label>
-
-              <div className="summary-lines">
-                <div><span>Subtotal</span><strong>{formatCurrency(subtotal)}</strong></div>
-                <div><span>Desconto</span><strong>{formatCurrency(discountValue)}</strong></div>
-                <div className="summary-total"><span>Total</span><strong>{formatCurrency(total)}</strong></div>
-              </div>
-
+            <div className="payment-block">
+              <span className="field-title">Forma de pagamento</span>
               <div className="payment-grid">
                 {paymentOptions.map((option) => (
                   <label key={option} className={`payment-option${paymentMethod === option ? " selected" : ""}`}>
@@ -246,13 +252,24 @@ export default function PdvPage({ db, onCheckout }) {
                   </label>
                 ))}
               </div>
-
-              <button type="button" className="primary-button full-button" onClick={submitSale} disabled={!cart.length}>
-                Finalizar venda
-              </button>
             </div>
-          </Panel>
-        </div>
+
+            <label>
+              Desconto
+              <input type="number" min="0" step="0.01" value={discount} onChange={(event) => setDiscount(event.target.value)} />
+            </label>
+
+            <div className="summary-lines">
+              <div><span>Subtotal</span><strong>{formatCurrency(subtotal)}</strong></div>
+              <div><span>Desconto</span><strong>{formatCurrency(discountValue)}</strong></div>
+              <div className="summary-total"><span>Total</span><strong>{formatCurrency(total)}</strong></div>
+            </div>
+
+            <button type="button" className="primary-button full-button pdv-finish-button" onClick={submitSale} disabled={!cart.length}>
+              Finalizar venda
+            </button>
+          </div>
+        </Panel>
       </div>
 
       <Panel title="Historico de vendas" description="Resumo simples para navegacao comercial durante a apresentacao.">
