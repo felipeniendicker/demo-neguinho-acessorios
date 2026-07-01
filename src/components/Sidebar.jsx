@@ -5,16 +5,19 @@ export default function Sidebar({ items, settings, isMobileOpen = false, onClose
     <>
       <button
         type="button"
-        className={`sidebar-backdrop${isMobileOpen ? " is-open" : ""}`}
+        className={`sidebar-backdrop mobile-overlay${isMobileOpen ? " is-open" : ""}`}
         onClick={onClose}
         aria-label="Fechar menu"
       />
 
-      <aside className={`sidebar${isMobileOpen ? " is-open" : ""}`}>
+      <aside
+        className={`sidebar mobile-drawer${isMobileOpen ? " is-open" : ""}`}
+        onClick={(event) => event.stopPropagation()}
+      >
         <div className="sidebar-mobile-head">
           <strong>Neguinho Acessorios</strong>
-          <button type="button" className="mobile-close-button" onClick={onClose}>
-            Fechar
+          <button type="button" className="mobile-close-button drawer-close" onClick={onClose} aria-label="Fechar menu">
+            ×
           </button>
         </div>
 

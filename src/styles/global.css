@@ -1399,28 +1399,21 @@ textarea:focus {
 }
 
 .mobile-menu-button {
-  flex-direction: column;
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
 }
 
-.mobile-menu-button span {
-  background: currentColor;
-  border-radius: 999px;
-  display: block;
-  height: 2px;
-  transition: transform 0.2s ease, opacity 0.2s ease;
-  width: 18px;
+.mobile-menu-button.is-open,
+.drawer-close {
+  background: var(--red);
+  color: #ffffff;
 }
 
-.mobile-menu-button.is-open span:nth-child(1) {
-  transform: translateY(6px) rotate(45deg);
-}
-
-.mobile-menu-button.is-open span:nth-child(2) {
-  opacity: 0;
-}
-
-.mobile-menu-button.is-open span:nth-child(3) {
-  transform: translateY(-6px) rotate(-45deg);
+.mobile-menu-button:active,
+.drawer-close:active {
+  transform: scale(0.97);
 }
 
 .mobile-fab {
@@ -1476,6 +1469,11 @@ textarea:focus {
 
 .sidebar-mobile-head strong {
   font-size: 0.95rem;
+}
+
+.drawer-close {
+  font-size: 1.5rem;
+  line-height: 1;
 }
 
 .print-sheet {
@@ -1690,7 +1688,8 @@ textarea:focus {
     display: none;
   }
 
-  .sidebar-backdrop {
+  .sidebar-backdrop,
+  .mobile-overlay {
     background: rgba(17, 17, 17, 0.45);
     backdrop-filter: blur(2px);
     border: 0;
@@ -1702,15 +1701,17 @@ textarea:focus {
     top: 0;
     transition: opacity 0.2s ease;
     width: 100vw;
-    z-index: 110;
+    z-index: 9000;
   }
 
-  .sidebar-backdrop.is-open {
+  .sidebar-backdrop.is-open,
+  .mobile-overlay.is-open {
     opacity: 1;
     pointer-events: auto;
   }
 
-  .sidebar {
+  .sidebar,
+  .mobile-drawer {
     border-radius: 0 24px 24px 0;
     box-shadow: 0 20px 40px rgba(17, 17, 17, 0.16);
     height: 100dvh;
@@ -1724,7 +1725,7 @@ textarea:focus {
     transform: translateX(-110%);
     transition: transform 0.24s ease, opacity 0.24s ease;
     width: 82vw;
-    z-index: 120;
+    z-index: 9100;
   }
 
   .sidebar .brand,
@@ -1756,7 +1757,8 @@ textarea:focus {
     width: 40px;
   }
 
-  .sidebar.is-open {
+  .sidebar.is-open,
+  .mobile-drawer.is-open {
     transform: translateX(0);
   }
 
@@ -1772,14 +1774,15 @@ textarea:focus {
     width: 100%;
   }
 
-  .mobile-topbar {
+  .mobile-topbar,
+  .mobile-header {
     border-radius: 0;
     left: 0;
     padding: 0.8rem 0.9rem;
     position: fixed;
     right: 0;
     top: 0;
-    z-index: 100;
+    z-index: 8000;
   }
 
   .button-row {

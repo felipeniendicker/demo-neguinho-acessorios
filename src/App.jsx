@@ -662,7 +662,7 @@ export default function App() {
               />
 
               <main className="main-shell">
-                <div className="mobile-topbar">
+                <div className={`mobile-topbar mobile-header${mobileMenuOpen ? " is-menu-open" : ""}`}>
                   <div className="mobile-topbar-brand">
                     <strong>Neguinho Acessórios</strong>
                     <span>Sistema de gestao</span>
@@ -672,10 +672,9 @@ export default function App() {
                     className={`mobile-menu-button${mobileMenuOpen ? " is-open" : ""}`}
                     onClick={() => setMobileMenuOpen((current) => !current)}
                     aria-label={mobileMenuOpen ? "Fechar menu" : "Abrir menu"}
+                    aria-expanded={mobileMenuOpen}
                   >
-                    <span />
-                    <span />
-                    <span />
+                    {mobileMenuOpen ? "×" : "☰"}
                   </button>
                 </div>
 
