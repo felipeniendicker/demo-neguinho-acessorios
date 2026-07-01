@@ -104,6 +104,26 @@ export default function App() {
   }, [location.pathname]);
 
   useEffect(() => {
+    function handleEscape(event) {
+      if (event.key === "Escape") {
+        setMobileMenuOpen(false);
+      }
+    }
+
+    if (mobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+      window.addEventListener("keydown", handleEscape);
+    } else {
+      document.body.style.overflow = "";
+    }
+
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", handleEscape);
+    };
+  }, [mobileMenuOpen]);
+
+  useEffect(() => {
     function handleScroll() {
       setIsNearTop(window.scrollY < 48);
     }
@@ -660,9 +680,9 @@ export default function App() {
                   </div>
                   <button
                     type="button"
-                    className="mobile-menu-button"
-                    onClick={() => setMobileMenuOpen(true)}
-                    aria-label="Abrir menu"
+                    className={`mobile-menu-button${mobileMenuOpen ? " is-open" : ""}`}
+                    onClick={() => setMobileMenuOpen((current) => !current)}
+                    aria-label={mobileMenuOpen ? "Fechar menu" : "Abrir menu"}
                   >
                     <span />
                     <span />
