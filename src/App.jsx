@@ -16,6 +16,7 @@ import InventoryPage from "./pages/InventoryPage.jsx";
 import LandingPage from "./pages/LandingPage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 import OrdersPage from "./pages/OrdersPage.jsx";
+import PdvPage from "./pages/PdvPage.jsx";
 import QuotesPage from "./pages/QuotesPage.jsx";
 import ReportsPage from "./pages/ReportsPage.jsx";
 import SettingsPage from "./pages/SettingsPage.jsx";
@@ -34,34 +35,36 @@ import {
 
 const navItems = [
   { path: "/dashboard", label: "Dashboard", caption: "Painel gerencial", icon: Icons.dashboard },
-  { path: "/clientes", label: "Clientes", caption: "Cadastro e histórico", icon: Icons.customers },
-  { path: "/motos", label: "Motos", caption: "Fichas técnicas", icon: Icons.bike },
-  { path: "/estoque", label: "Estoque", caption: "Peças e produtos", icon: Icons.inventory },
-  { path: "/orcamentos", label: "Orçamentos", caption: "Aprovação e impressão", icon: Icons.quote },
-  { path: "/ordens-servico", label: "OS", caption: "Execução da oficina", icon: Icons.order },
+  { path: "/clientes", label: "Clientes", caption: "Cadastro e historico", icon: Icons.customers },
+  { path: "/motos", label: "Motos", caption: "Fichas tecnicas", icon: Icons.bike },
+  { path: "/estoque", label: "Estoque", caption: "Pecas e produtos", icon: Icons.inventory },
+  { path: "/pdv", label: "PDV", caption: "Venda rapida no balcao", icon: Icons.pdv },
+  { path: "/orcamentos", label: "Orcamentos", caption: "Aprovacao e impressao", icon: Icons.quote },
+  { path: "/ordens-servico", label: "OS", caption: "Execucao da oficina", icon: Icons.order },
   { path: "/financeiro", label: "Financeiro", caption: "Caixa e faturamento", icon: Icons.finance },
   { path: "/agenda", label: "Agenda", caption: "Prazos e entregas", icon: Icons.agenda },
-  { path: "/catalogo", label: "Catálogo", caption: "Página do cliente", icon: Icons.catalog },
-  { path: "/usuarios", label: "Usuários", caption: "Perfis e permissões", icon: Icons.users },
-  { path: "/relatorios", label: "Relatórios", caption: "Indicadores avançados", icon: Icons.reports },
-  { path: "/integracoes", label: "Integrações", caption: "Evolução futura", icon: Icons.integrations },
-  { path: "/personalizacao", label: "Personalização", caption: "Identidade da oficina", icon: Icons.settings }
+  { path: "/catalogo", label: "Catalogo", caption: "Pagina do cliente", icon: Icons.catalog },
+  { path: "/usuarios", label: "Usuarios", caption: "Perfis e permissoes", icon: Icons.users },
+  { path: "/relatorios", label: "Relatorios", caption: "Indicadores avancados", icon: Icons.reports },
+  { path: "/integracoes", label: "Integracoes", caption: "Evolucao futura", icon: Icons.integrations },
+  { path: "/personalizacao", label: "Personalizacao", caption: "Identidade da oficina", icon: Icons.settings }
 ];
 
 const titles = {
-  "/dashboard": ["Dashboard", "Indicadores executivos para a apresentação comercial."],
-  "/clientes": ["Clientes", "Base com histórico de compras, serviços e motos vinculadas."],
-  "/motos": ["Motos", "Cadastro técnico e histórico completo por veículo."],
-  "/estoque": ["Estoque Inteligente", "Controle de peças, margem, reposição e movimentação."],
-  "/orcamentos": ["Orçamentos", "Propostas com impressão, status e conversão em OS."],
-  "/ordens-servico": ["Ordens de Serviço", "Fluxo avançado com anexos, fotos e WhatsApp."],
-  "/financeiro": ["Financeiro", "Entradas, saídas, fluxo de caixa e faturamento."],
-  "/agenda": ["Agenda da Oficina", "Serviços agendados e controle de prazos."],
-  "/catalogo": ["Catálogo Online", "Página simples para o cliente pedir peças pelo WhatsApp."],
-  "/usuarios": ["Usuários e Permissões", "Perfis internos simulados para demonstração."],
-  "/relatorios": ["Relatórios Avançados", "Resumo de vendas, lucros, peças e recorrência."],
-  "/integracoes": ["Integrações Futuras", "Recursos preparados para novas fases do produto."],
-  "/personalizacao": ["Personalização", "Identidade visual da oficina e dados comerciais."]
+  "/dashboard": ["Dashboard", "Indicadores executivos para a apresentacao comercial."],
+  "/clientes": ["Clientes", "Base com historico de compras, servicos e motos vinculadas."],
+  "/motos": ["Motos", "Cadastro tecnico e historico completo por veiculo."],
+  "/estoque": ["Estoque Inteligente", "Controle de pecas, margem, reposicao e movimentacao."],
+  "/pdv": ["PDV", "Venda de balcao integrada ao estoque, financeiro e dashboard."],
+  "/orcamentos": ["Orcamentos", "Propostas com impressao, status e conversao em OS."],
+  "/ordens-servico": ["Ordens de Servico", "Fluxo avancado com anexos, fotos e WhatsApp."],
+  "/financeiro": ["Financeiro", "Entradas, saidas, fluxo de caixa e faturamento."],
+  "/agenda": ["Agenda da Oficina", "Servicos agendados e controle de prazos."],
+  "/catalogo": ["Catalogo Online", "Pagina simples para o cliente pedir pecas pelo WhatsApp."],
+  "/usuarios": ["Usuarios e Permissoes", "Perfis internos simulados para demonstracao."],
+  "/relatorios": ["Relatorios Avancados", "Resumo de vendas, lucros, pecas e recorrencia."],
+  "/integracoes": ["Integracoes Futuras", "Recursos preparados para novas fases do produto."],
+  "/personalizacao": ["Personalizacao", "Identidade visual da oficina e dados comerciais."]
 };
 
 const ACCESS_KEY = "neguinho-acessorios-demo-access";
@@ -86,12 +89,13 @@ export default function App() {
     if (!toast) {
       return undefined;
     }
+
     const timeout = window.setTimeout(() => setToast(null), 3200);
     return () => window.clearTimeout(timeout);
   }, [toast]);
 
   useEffect(() => {
-    const pageName = titles[location.pathname]?.[0] || "Neguinho Acessórios";
+    const pageName = titles[location.pathname]?.[0] || "Neguinho Acessorios";
     document.title = `${pageName} | Neguinho Acessórios`;
   }, [location.pathname]);
 
@@ -143,16 +147,26 @@ export default function App() {
         productSales[item.name] = (productSales[item.name] || 0) + Number(item.quantity || 0);
       });
     });
+    db.sales.forEach((sale) => {
+      sale.items.forEach((item) => {
+        productSales[item.name] = (productSales[item.name] || 0) + Number(item.quantity || 0);
+      });
+    });
 
     const serviceSales = {};
     db.orders.forEach((order) => {
       serviceSales[order.service] = (serviceSales[order.service] || 0) + 1;
     });
+    serviceSales["Vendas de balcao"] = db.sales.length;
 
     const customerSales = {};
     finishedOrders.forEach((order) => {
       const name = helpers.customerName(order.customerId);
       customerSales[name] = (customerSales[name] || 0) + Number(order.total || 0);
+    });
+    db.sales.forEach((sale) => {
+      const name = sale.customerName || "Cliente de balcão";
+      customerSales[name] = (customerSales[name] || 0) + Number(sale.total || 0);
     });
 
     return {
@@ -181,6 +195,7 @@ export default function App() {
       saveDatabase(next);
       return next;
     });
+
     if (nextToast) {
       setToast(nextToast);
     }
@@ -198,6 +213,7 @@ export default function App() {
           customers: current.customers.map((item) => (item.id === form.id ? { ...item, ...form } : item))
         };
       }
+
       return { ...current, customers: [{ ...form, id: createId("cli") }, ...current.customers] };
     }, { title: "Cliente salvo", message: "Cadastro atualizado com sucesso." });
   }
@@ -206,6 +222,7 @@ export default function App() {
     if (!confirmDelete("Excluir este cliente?")) {
       return;
     }
+
     persist((current) => ({
       ...current,
       customers: current.customers.filter((item) => item.id !== id),
@@ -213,7 +230,7 @@ export default function App() {
       quotes: current.quotes.filter((item) => item.customerId !== id),
       orders: current.orders.filter((item) => item.customerId !== id),
       agenda: current.agenda.filter((item) => item.customerId !== id)
-    }), { type: "warning", title: "Cliente excluído", message: "Os registros vinculados foram removidos." });
+    }), { type: "warning", title: "Cliente excluido", message: "Os registros vinculados foram removidos." });
   }
 
   function saveBike(form) {
@@ -221,21 +238,23 @@ export default function App() {
       if (form.id) {
         return { ...current, bikes: current.bikes.map((item) => (item.id === form.id ? { ...item, ...form } : item)) };
       }
+
       return { ...current, bikes: [{ ...form, id: createId("moto") }, ...current.bikes] };
-    }, { title: "Moto salva", message: "Ficha técnica atualizada." });
+    }, { title: "Moto salva", message: "Ficha tecnica atualizada." });
   }
 
   function deleteBike(id) {
     if (!confirmDelete("Excluir esta moto?")) {
       return;
     }
+
     persist((current) => ({
       ...current,
       bikes: current.bikes.filter((item) => item.id !== id),
       quotes: current.quotes.filter((item) => item.bikeId !== id),
       orders: current.orders.filter((item) => item.bikeId !== id),
       agenda: current.agenda.filter((item) => item.bikeId !== id)
-    }), { type: "warning", title: "Moto excluída", message: "A ficha da moto foi removida." });
+    }), { type: "warning", title: "Moto excluida", message: "A ficha da moto foi removida." });
   }
 
   function saveInventory(form) {
@@ -285,10 +304,11 @@ export default function App() {
     if (!confirmDelete("Excluir este item de estoque?")) {
       return;
     }
+
     persist((current) => ({
       ...current,
       inventory: current.inventory.filter((item) => item.id !== id)
-    }), { type: "warning", title: "Item excluído", message: "O produto foi removido do estoque." });
+    }), { type: "warning", title: "Item excluido", message: "O produto foi removido do estoque." });
   }
 
   function moveInventory(id, type, quantity) {
@@ -299,11 +319,71 @@ export default function App() {
           ? {
               ...item,
               quantity: type === "entrada" ? item.quantity + quantity : Math.max(item.quantity - quantity, 0),
-              movements: [...item.movements, { id: createId("mov"), type, quantity, note: "Ajuste rápido", date: currentDate() }]
+              movements: [...item.movements, { id: createId("mov"), type, quantity, note: "Ajuste rapido", date: currentDate() }]
             }
           : item
       )
-    }), { title: "Movimentação registrada", message: `Estoque atualizado com ${type}.` });
+    }), { title: "Movimentacao registrada", message: `Estoque atualizado com ${type}.` });
+  }
+
+  function saveSale(form) {
+    persist((current) => {
+      const nextNumber = `PDV-${String(current.sales.length + 1).padStart(3, "0")}`;
+      const saleDate = currentDate();
+      const saleTime = new Date().toTimeString().slice(0, 8);
+      const inventoryMap = new Map(current.inventory.map((item) => [item.id, item]));
+
+      form.items.forEach((item) => {
+        const product = inventoryMap.get(item.inventoryId);
+        if (!product) {
+          return;
+        }
+
+        product.quantity = Math.max(Number(product.quantity || 0) - Number(item.quantity || 0), 0);
+        product.movements = [
+          ...product.movements,
+          {
+            id: createId("mov"),
+            type: "saida",
+            quantity: Number(item.quantity || 0),
+            note: `Baixa automatica ${nextNumber}`,
+            date: saleDate
+          }
+        ];
+      });
+
+      const sale = {
+        id: createId("sale"),
+        number: nextNumber,
+        customerName: form.customerName,
+        paymentMethod: form.paymentMethod,
+        date: saleDate,
+        time: saleTime,
+        subtotal: Number(form.subtotal || 0),
+        discount: Number(form.discount || 0),
+        total: Number(form.total || 0),
+        items: form.items
+      };
+
+      return {
+        ...current,
+        sales: [sale, ...current.sales],
+        finance: [
+          {
+            id: createId("fin"),
+            date: saleDate,
+            type: "entrada",
+            category: "Venda PDV",
+            description: `Venda balcao ${nextNumber}`,
+            amount: Number(form.total || 0),
+            status: "Pago",
+            sourceOrderId: null
+          },
+          ...current.finance
+        ],
+        inventory: [...inventoryMap.values()]
+      };
+    }, { title: "Venda realizada", message: "Venda realizada com sucesso." });
   }
 
   function saveQuote(form) {
@@ -311,25 +391,27 @@ export default function App() {
       if (form.id) {
         return { ...current, quotes: current.quotes.map((item) => (item.id === form.id ? { ...item, ...form } : item)) };
       }
+
       return { ...current, quotes: [{ ...form, id: createId("orc") }, ...current.quotes] };
-    }, { title: "Orçamento salvo", message: "Proposta pronta para o cliente." });
+    }, { title: "Orcamento salvo", message: "Proposta pronta para o cliente." });
   }
 
   function deleteQuote(id) {
-    if (!confirmDelete("Excluir este orçamento?")) {
+    if (!confirmDelete("Excluir este orcamento?")) {
       return;
     }
+
     persist((current) => ({
       ...current,
       quotes: current.quotes.filter((item) => item.id !== id)
-    }), { type: "warning", title: "Orçamento excluído", message: "O registro foi removido." });
+    }), { type: "warning", title: "Orcamento excluido", message: "O registro foi removido." });
   }
 
   function changeQuoteStatus(id, status) {
     persist((current) => ({
       ...current,
       quotes: current.quotes.map((item) => (item.id === id ? { ...item, status } : item))
-    }), { title: "Status atualizado", message: `Orçamento marcado como ${status}.` });
+    }), { title: "Status atualizado", message: `Orcamento marcado como ${status}.` });
   }
 
   function generateOrderFromQuote(quote) {
@@ -341,7 +423,7 @@ export default function App() {
       partItems: quote.partItems,
       laborValue: quote.laborValue
     });
-    setToast({ title: "Dados carregados", message: "O orçamento foi enviado para a tela de OS." });
+    setToast({ title: "Dados carregados", message: "O orcamento foi enviado para a tela de OS." });
     navigate("/ordens-servico");
   }
 
@@ -360,7 +442,7 @@ export default function App() {
       }
 
       return { ...current, orders: [{ ...normalized, id: createId("os") }, ...current.orders] };
-    }, { title: "OS salva", message: "A ordem de serviço foi registrada." });
+    }, { title: "OS salva", message: "A ordem de servico foi registrada." });
   }
 
   function ensureFinancialForOrder(orderId) {
@@ -394,7 +476,7 @@ export default function App() {
           product.quantity = Math.max(product.quantity - Number(item.quantity || 0), 0);
           product.movements = [
             ...product.movements,
-            { id: createId("mov"), type: "saida", quantity: item.quantity, note: `Baixa automática OS ${order.id}`, date: currentDate() }
+            { id: createId("mov"), type: "saida", quantity: item.quantity, note: `Baixa automatica OS ${order.id}`, date: currentDate() }
           ];
         }
       });
@@ -417,6 +499,7 @@ export default function App() {
       ensureFinancialForOrder(id);
       return;
     }
+
     persist((current) => ({
       ...current,
       orders: current.orders.map((item) => (item.id === id ? { ...item, status } : item))
@@ -424,14 +507,15 @@ export default function App() {
   }
 
   function deleteOrder(id) {
-    if (!confirmDelete("Excluir esta ordem de serviço?")) {
+    if (!confirmDelete("Excluir esta ordem de servico?")) {
       return;
     }
+
     persist((current) => ({
       ...current,
       orders: current.orders.filter((item) => item.id !== id),
       finance: current.finance.filter((item) => item.sourceOrderId !== id)
-    }), { type: "warning", title: "OS excluída", message: "A ordem de serviço foi removida." });
+    }), { type: "warning", title: "OS excluida", message: "A ordem de servico foi removida." });
   }
 
   function notifyCustomer(id) {
@@ -445,7 +529,7 @@ export default function App() {
     persist((current) => ({
       ...current,
       finance: [{ ...form, id: createId("fin"), amount: Number(form.amount || 0) }, ...current.finance]
-    }), { title: "Movimentação salva", message: "Lançamento financeiro registrado." });
+    }), { title: "Movimentacao salva", message: "Lancamento financeiro registrado." });
   }
 
   function saveAgenda(form) {
@@ -453,6 +537,7 @@ export default function App() {
       if (form.id) {
         return { ...current, agenda: current.agenda.map((item) => (item.id === form.id ? { ...item, ...form } : item)) };
       }
+
       return { ...current, agenda: [{ ...form, id: createId("age") }, ...current.agenda] };
     }, { title: "Agendamento salvo", message: "Agenda atualizada." });
   }
@@ -461,10 +546,11 @@ export default function App() {
     if (!confirmDelete("Excluir este agendamento?")) {
       return;
     }
+
     persist((current) => ({
       ...current,
       agenda: current.agenda.filter((item) => item.id !== id)
-    }), { type: "warning", title: "Agendamento excluído", message: "O serviço saiu da agenda." });
+    }), { type: "warning", title: "Agendamento excluido", message: "O servico saiu da agenda." });
   }
 
   function saveUser(form) {
@@ -472,29 +558,31 @@ export default function App() {
       if (form.id) {
         return { ...current, users: current.users.map((item) => (item.id === form.id ? { ...item, ...form } : item)) };
       }
+
       return { ...current, users: [{ ...form, id: createId("usr") }, ...current.users] };
-    }, { title: "Usuário salvo", message: "Perfil interno atualizado." });
+    }, { title: "Usuario salvo", message: "Perfil interno atualizado." });
   }
 
   function deleteUser(id) {
-    if (!confirmDelete("Excluir este usuário?")) {
+    if (!confirmDelete("Excluir este usuario?")) {
       return;
     }
+
     persist((current) => ({
       ...current,
       users: current.users.filter((item) => item.id !== id)
-    }), { type: "warning", title: "Usuário excluído", message: "Registro removido." });
+    }), { type: "warning", title: "Usuario excluido", message: "Registro removido." });
   }
 
   function saveSettings(nextSettings) {
     persist((current) => ({
       ...current,
       settings: { ...current.settings, ...nextSettings }
-    }), { title: "Personalização salva", message: "A identidade da oficina foi atualizada." });
+    }), { title: "Personalizacao salva", message: "A identidade da oficina foi atualizada." });
   }
 
   function handleExportReport() {
-    window.alert("Relatório exportado com sucesso (simulação da demo).");
+    window.alert("Relatorio exportado com sucesso (simulacao da demo).");
   }
 
   function handlePrintQuote(quote) {
@@ -523,6 +611,7 @@ export default function App() {
     if (!confirmDelete("Restaurar os dados iniciais da demo?")) {
       return;
     }
+
     const seeded = resetDatabase();
     setDb(seeded);
     setToast({ title: "Demo restaurada", message: "Os dados fake foram recriados no localStorage." });
@@ -534,6 +623,7 @@ export default function App() {
       quotes: sortByDateDesc(db.quotes, "date"),
       orders: sortByDateDesc(db.orders, "entryDate"),
       finance: sortByDateDesc(db.finance, "date"),
+      sales: sortByDateDesc(db.sales, "date").sort((a, b) => `${b.date}${b.time || ""}`.localeCompare(`${a.date}${a.time || ""}`)),
       agenda: sortByDateDesc(db.agenda, "date")
     }),
     [db]
@@ -566,7 +656,7 @@ export default function App() {
                 <div className="mobile-topbar">
                   <div className="mobile-topbar-brand">
                     <strong>Neguinho Acessórios</strong>
-                    <span>Sistema de gestão</span>
+                    <span>Sistema de gestao</span>
                   </div>
                   <button
                     type="button"
@@ -597,7 +687,7 @@ export default function App() {
                   actions={
                     <div className="button-row">
                       <button type="button" className="primary-button" onClick={() => navigate("/ordens-servico")}>Nova OS</button>
-                      <button type="button" className="secondary-button" onClick={() => navigate("/orcamentos")}>Novo orçamento</button>
+                      <button type="button" className="secondary-button" onClick={() => navigate("/orcamentos")}>Novo orcamento</button>
                       <button type="button" className="ghost-button" onClick={handleReset}>Resetar demo</button>
                     </div>
                   }
@@ -609,6 +699,7 @@ export default function App() {
                     <Route path="/clientes" element={<CustomersPage db={sortedDb} helpers={helpers} onSave={saveCustomer} onDelete={deleteCustomer} />} />
                     <Route path="/motos" element={<BikesPage db={sortedDb} helpers={helpers} onSave={saveBike} onDelete={deleteBike} />} />
                     <Route path="/estoque" element={<InventoryPage db={sortedDb} onSave={saveInventory} onDelete={deleteInventory} onMove={moveInventory} />} />
+                    <Route path="/pdv" element={<PdvPage db={sortedDb} onCheckout={saveSale} />} />
                     <Route path="/orcamentos" element={<QuotesPage db={sortedDb} helpers={helpers} onSave={saveQuote} onDelete={deleteQuote} onStatusChange={changeQuoteStatus} onGenerateOrder={generateOrderFromQuote} onPrint={handlePrintQuote} />} />
                     <Route path="/ordens-servico" element={<OrdersPage db={sortedDb} draftOrder={draftOrder} helpers={helpers} onConsumeDraft={() => setDraftOrder(null)} onSave={saveOrder} onDelete={deleteOrder} onStatusChange={changeOrderStatus} onNotify={notifyCustomer} onPrint={handlePrintOrder} />} />
                     <Route path="/financeiro" element={<FinancePage db={sortedDb} onSave={saveFinance} />} />
@@ -633,22 +724,22 @@ export default function App() {
         <section className="print-sheet">
           <h1>{db.settings.shopName}</h1>
           <p>{db.settings.address} · WhatsApp {db.settings.whatsapp}</p>
-          <h2>Orçamento</h2>
+          <h2>Orcamento</h2>
           <p>Cliente: {helpers.customerName(printQuote.customerId)}</p>
           <p>Moto: {helpers.bikeName(printQuote.bikeId)}</p>
           <p>Data: {printQuote.date}</p>
           <p>Validade: {printQuote.validUntil}</p>
-          <p>Serviço: {printQuote.serviceDescription}</p>
+          <p>Servico: {printQuote.serviceDescription}</p>
           <ul>
             {printQuote.partItems.map((item, index) => (
               <li key={`${item.inventoryId}-${index}`}>{item.name} x{item.quantity} - {formatCurrency(item.unitPrice * item.quantity)}</li>
             ))}
           </ul>
-          <p>Peças: {formatCurrency(printQuote.partsValue)}</p>
-          <p>Mão de obra: {formatCurrency(printQuote.laborValue)}</p>
+          <p>Pecas: {formatCurrency(printQuote.partsValue)}</p>
+          <p>Mao de obra: {formatCurrency(printQuote.laborValue)}</p>
           <p>Desconto: {formatCurrency(printQuote.discount)}</p>
           <p>Total: {formatCurrency(printQuote.total)}</p>
-          <p>Observações: {printQuote.notes || "--"}</p>
+          <p>Observacoes: {printQuote.notes || "--"}</p>
         </section>
       )}
 
@@ -656,24 +747,24 @@ export default function App() {
         <section className="print-sheet">
           <h1>{db.settings.shopName}</h1>
           <p>{db.settings.address} · WhatsApp {db.settings.whatsapp}</p>
-          <h2>Ordem de Serviço</h2>
+          <h2>Ordem de Servico</h2>
           <p>Cliente: {helpers.customerName(printOrder.customerId)}</p>
           <p>Moto: {helpers.bikeName(printOrder.bikeId)}</p>
-          <p>Serviço: {printOrder.service}</p>
-          <p>Mecânico responsável: {printOrder.mechanic}</p>
+          <p>Servico: {printOrder.service}</p>
+          <p>Mecanico responsavel: {printOrder.mechanic}</p>
           <p>Entrada: {printOrder.entryDate}</p>
-          <p>Previsão: {printOrder.dueDate}</p>
+          <p>Previsao: {printOrder.dueDate}</p>
           <p>Status: {printOrder.status}</p>
           <ul>
             {printOrder.partItems.map((item, index) => (
               <li key={`${item.inventoryId}-${index}`}>{item.name} x{item.quantity} - {formatCurrency(item.unitPrice * item.quantity)}</li>
             ))}
           </ul>
-          <p>Peças: {formatCurrency(printOrder.partsValue)}</p>
-          <p>Mão de obra: {formatCurrency(printOrder.laborValue)}</p>
+          <p>Pecas: {formatCurrency(printOrder.partsValue)}</p>
+          <p>Mao de obra: {formatCurrency(printOrder.laborValue)}</p>
           <p>Total: {formatCurrency(printOrder.total)}</p>
-          <p>Observações internas: {printOrder.internalNotes || "--"}</p>
-          <p>Observações para o cliente: {printOrder.customerNotes || "--"}</p>
+          <p>Observacoes internas: {printOrder.internalNotes || "--"}</p>
+          <p>Observacoes para o cliente: {printOrder.customerNotes || "--"}</p>
         </section>
       )}
 

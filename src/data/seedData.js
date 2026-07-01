@@ -452,6 +452,26 @@ export function createSeedData() {
       sourceOrderId: "os-4"
     },
     {
+      id: "fin-5",
+      date: currentDate(),
+      type: "entrada",
+      category: "Venda PDV",
+      description: "Venda balcão PDV-001",
+      amount: 90,
+      status: "Pago",
+      sourceOrderId: null
+    },
+    {
+      id: "fin-6",
+      date: daysFromToday(-1),
+      type: "entrada",
+      category: "Venda PDV",
+      description: "Venda balcão PDV-002",
+      amount: 295,
+      status: "Pago",
+      sourceOrderId: null
+    },
+    {
       id: "fin-3",
       date: daysFromToday(-2),
       type: "saida",
@@ -470,6 +490,39 @@ export function createSeedData() {
       amount: 185,
       status: "Pagar",
       sourceOrderId: null
+    }
+  ];
+
+  const sales = [
+    {
+      id: "sale-1",
+      number: "PDV-001",
+      customerName: "Cliente de balcão",
+      paymentMethod: "PIX",
+      date: currentDate(),
+      time: "10:15:00",
+      subtotal: 94,
+      discount: 4,
+      total: 90,
+      items: [
+        { inventoryId: "prd-8", name: "Lampada farol H4", quantity: 1, unitPrice: 24, subtotal: 24 },
+        { inventoryId: "prd-5", name: "Cabo de embreagem", quantity: 1, unitPrice: 39, subtotal: 39 },
+        { inventoryId: "prd-1", name: "Oleo 10W30", quantity: 1, unitPrice: 35, subtotal: 35 }
+      ]
+    },
+    {
+      id: "sale-2",
+      number: "PDV-002",
+      customerName: "Anderson Lima",
+      paymentMethod: "Cartao",
+      date: daysFromToday(-1),
+      time: "16:40:00",
+      subtotal: 295,
+      discount: 0,
+      total: 295,
+      items: [
+        { inventoryId: "prd-7", name: "Pneu traseiro 90/90", quantity: 1, unitPrice: 295, subtotal: 295 }
+      ]
     }
   ];
 
@@ -559,6 +612,7 @@ export function createSeedData() {
     quotes,
     orders,
     finance,
+    sales,
     agenda,
     users,
     settings,
