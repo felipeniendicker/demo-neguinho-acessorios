@@ -81,7 +81,6 @@ export default function App() {
   const [printOrder, setPrintOrder] = useState(null);
   const [hasAccess, setHasAccess] = useState(() => window.localStorage.getItem(ACCESS_KEY) === "1");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isNearTop, setIsNearTop] = useState(true);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -122,16 +121,6 @@ export default function App() {
       window.removeEventListener("keydown", handleEscape);
     };
   }, [mobileMenuOpen]);
-
-  useEffect(() => {
-    function handleScroll() {
-      setIsNearTop(window.scrollY < 48);
-    }
-
-    handleScroll();
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   const helpers = useMemo(() => {
     const customerMap = new Map(db.customers.map((item) => [item.id, item]));
@@ -689,19 +678,6 @@ export default function App() {
                     <span />
                   </button>
                 </div>
-
-                {!mobileMenuOpen && (
-                  <button
-                    type="button"
-                    className={`mobile-fab${isNearTop ? " is-near-top" : ""}`}
-                    onClick={() => setMobileMenuOpen(true)}
-                    aria-label="Abrir menu"
-                  >
-                    <span />
-                    <span />
-                    <span />
-                  </button>
-                )}
 
                 <Header
                   title={title}

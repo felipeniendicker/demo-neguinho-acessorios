@@ -1761,8 +1761,7 @@ textarea:focus {
   }
 
   .sidebar-mobile-head,
-  .mobile-topbar,
-  .mobile-fab {
+  .mobile-topbar {
     display: flex;
   }
 
@@ -1908,12 +1907,6 @@ textarea:focus {
     padding-top: 0.8rem;
   }
 
-  .mobile-fab {
-    bottom: 0.85rem;
-    right: 1rem;
-    z-index: 105;
-  }
-
   .mobile-tight-metrics {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -1980,6 +1973,15 @@ textarea:focus {
 
   .landing-card {
     min-height: 132px;
+  }
+}
+
+@media (max-width: 768px) {
+  .floating-menu-button,
+  .mobile-fab,
+  .fab,
+  .menu-fab {
+    display: none !important;
   }
 }
 
