@@ -4,7 +4,7 @@ export default function Header({ title, subtitle, actions }) {
   return (
     <header className="header">
       <div>
-        <span className="kicker">Neguinho Acessórios</span>
+        <span className="kicker">Neguinho Acessorios</span>
         <h2>{title}</h2>
         <p>{subtitle}</p>
       </div>

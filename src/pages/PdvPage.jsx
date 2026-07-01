@@ -2,8 +2,10 @@ import { useMemo, useState } from "react";
 import DataTable from "../components/DataTable.jsx";
 import EmptyState from "../components/EmptyState.jsx";
 import MetricCard from "../components/MetricCard.jsx";
+import MobileModuleHeader from "../components/MobileModuleHeader.jsx";
 import Panel from "../components/Panel.jsx";
 import { Icons } from "../components/icons.jsx";
+import useIsMobile from "../hooks/useIsMobile.js";
 import { currentDate, formatCurrency, formatDateTime, normalizeText, sumBy } from "../utils/formatters.js";
 
 const paymentOptions = ["Dinheiro", "PIX", "Cartao", "Credito"];
@@ -14,6 +16,8 @@ export default function PdvPage({ db, onCheckout }) {
   const [discount, setDiscount] = useState("0");
   const [paymentMethod, setPaymentMethod] = useState("PIX");
   const [cart, setCart] = useState([]);
+  const [mobileStep, setMobileStep] = useState("produtos");
+  const isMobile = useIsMobile();
 
   const query = normalizeText(search);
 
@@ -36,7 +40,6 @@ export default function PdvPage({ db, onCheckout }) {
 
   const salesTodayValue = sumBy(todaySales, (sale) => sale.total);
   const averageTicket = todaySales.length ? salesTodayValue / todaySales.length : 0;
-  const lastSale = db.sales[0] || null;
   const subtotal = sumBy(cart, (item) => item.subtotal);
   const discountValue = Math.min(Number(discount || 0), subtotal);
   const total = Math.max(subtotal - discountValue, 0);
@@ -69,6 +72,10 @@ export default function PdvPage({ db, onCheckout }) {
         }
       ].filter((item) => item.quantity > 0);
     });
+
+    if (isMobile) {
+      setMobileStep("carrinho");
+    }
   }
 
   function updateQuantity(inventoryId, delta) {
@@ -119,160 +126,177 @@ export default function PdvPage({ db, onCheckout }) {
     setCustomerName("Cliente de balcao");
     setPaymentMethod("PIX");
     setSearch("");
+    setMobileStep("produtos");
   }
+
+  const productsPanel = (
+    <Panel title="Produtos" description={isMobile ? "Escolha os itens" : "Pesquisa rapida com itens vindos diretamente do estoque."} action={
+      <input
+        className="search-input"
+        value={search}
+        onChange={(event) => setSearch(event.target.value)}
+        placeholder="Buscar produto"
+      />
+    }>
+      <div className="pdv-product-grid">
+        {products.length ? (
+          products.map((product) => {
+            const unavailable = Number(product.quantity || 0) <= 0;
+
+            return (
+              <article key={product.id} className={`pdv-product-card${unavailable ? " disabled" : ""}`}>
+                <div className="pdv-product-meta">
+                  <strong>{product.name}</strong>
+                  <p>{product.category}</p>
+                  <small>SKU {product.sku}</small>
+                </div>
+
+                <div className="pdv-product-footline">
+                  <span className={`stock-pill${Number(product.quantity) <= Number(product.minStock) ? " low" : ""}`}>
+                    {product.quantity} em estoque
+                  </span>
+                  <strong>{formatCurrency(product.salePrice)}</strong>
+                </div>
+
+                <button
+                  type="button"
+                  className="primary-button full-button"
+                  onClick={() => addToCart(product)}
+                  disabled={unavailable}
+                >
+                  {unavailable ? "Sem saldo" : "Adicionar"}
+                </button>
+              </article>
+            );
+          })
+        ) : (
+          <EmptyState title="Nenhum produto encontrado" description="Ajuste a busca ou cadastre novos itens no estoque." />
+        )}
+      </div>
+    </Panel>
+  );
+
+  const cartPanel = (
+    <Panel title="Carrinho" description={isMobile ? "Itens adicionados" : "Itens da venda com controle rapido de quantidade."}>
+      {cart.length ? (
+        <div className="cart-list">
+          {cart.map((item) => (
+            <article key={item.inventoryId} className="cart-item">
+              <div className="cart-item-main">
+                <strong>{item.name}</strong>
+                <span>{formatCurrency(item.unitPrice)} cada</span>
+              </div>
+
+              <div className="cart-item-actions">
+                <div className="qty-controls">
+                  <button type="button" className="small-button" onClick={() => updateQuantity(item.inventoryId, -1)}>-</button>
+                  <strong>{item.quantity}</strong>
+                  <button type="button" className="small-button" onClick={() => updateQuantity(item.inventoryId, 1)}>+</button>
+                </div>
+
+                <div className="cart-subtotal">
+                  <span>Subtotal</span>
+                  <strong>{formatCurrency(item.subtotal)}</strong>
+                </div>
+
+                <button type="button" className="ghost-button" onClick={() => removeItem(item.inventoryId)}>
+                  Remover
+                </button>
+              </div>
+            </article>
+          ))}
+
+          <div className="cart-total-row">
+            <span>Total</span>
+            <strong>{formatCurrency(total)}</strong>
+          </div>
+        </div>
+      ) : (
+        <EmptyState title="Carrinho vazio" description="Adicione produtos para continuar." />
+      )}
+    </Panel>
+  );
+
+  const paymentPanel = (
+    <Panel title="Pagamento" description={isMobile ? "Finalize a venda" : "Fechamento rapido com forma de pagamento."}>
+      <div className="pdv-summary">
+        <label>
+          Cliente
+          <input
+            value={customerName}
+            onChange={(event) => setCustomerName(event.target.value)}
+            placeholder="Nome do cliente"
+          />
+        </label>
+
+        <label>
+          Desconto
+          <input type="number" min="0" step="0.01" value={discount} onChange={(event) => setDiscount(event.target.value)} />
+        </label>
+
+        <div className="payment-block">
+          <span className="field-title">Forma de pagamento</span>
+          <div className="payment-grid">
+            {paymentOptions.map((option) => (
+              <label key={option} className={`payment-option${paymentMethod === option ? " selected" : ""}`}>
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  value={option}
+                  checked={paymentMethod === option}
+                  onChange={(event) => setPaymentMethod(event.target.value)}
+                />
+                <span>{option}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+
+        <div className="summary-lines">
+          <div><span>Subtotal</span><strong>{formatCurrency(subtotal)}</strong></div>
+          <div><span>Desconto</span><strong>{formatCurrency(discountValue)}</strong></div>
+          <div className="summary-total"><span>Total</span><strong>{formatCurrency(total)}</strong></div>
+        </div>
+
+        <button type="button" className="primary-button full-button pdv-finish-button" onClick={submitSale} disabled={!cart.length}>
+          Finalizar venda
+        </button>
+      </div>
+    </Panel>
+  );
 
   return (
     <div className="page-stack">
-      <div className="metrics-grid compact">
-        <MetricCard icon={Icons.pdv} label="Vendas hoje" value={todaySales.length} helper="Cupons emitidos no dia" tone="blue" />
-        <MetricCard icon={Icons.finance} label="Faturamento hoje" value={formatCurrency(salesTodayValue)} helper="Receita do balcao" tone="green" />
-        <MetricCard icon={Icons.reports} label="Ticket medio" value={formatCurrency(averageTicket)} helper="Media por venda" />
-        <MetricCard
-          icon={Icons.inventory}
-          label="Ultima venda"
-          value={lastSale ? formatCurrency(lastSale.total) : "--"}
-          helper={lastSale ? `${lastSale.number} - ${lastSale.paymentMethod}` : "Sem vendas registradas"}
-          tone="red"
-        />
+      <MobileModuleHeader title="PDV" subtitle="Venda rapida no balcao." />
+
+      <div className="metrics-grid compact mobile-tight-metrics">
+        <MetricCard icon={Icons.pdv} label="Vendas hoje" value={todaySales.length} helper="Cupons" tone="blue" />
+        <MetricCard icon={Icons.finance} label="Faturamento hoje" value={formatCurrency(salesTodayValue)} helper="Receita" tone="green" />
+        <MetricCard icon={Icons.reports} label="Ticket medio" value={formatCurrency(averageTicket)} helper="Media" />
       </div>
 
-      <div className="pdv-layout">
-        <Panel
-          title="Produtos para venda"
-          description="Pesquisa rapida com itens vindos diretamente do estoque."
-          action={
-            <input
-              className="search-input"
-              value={search}
-              onChange={(event) => setSearch(event.target.value)}
-              placeholder="Pesquisar peca ou produto"
-            />
-          }
-        >
-          <div className="pdv-product-grid">
-            {products.length ? (
-              products.map((product) => {
-                const unavailable = Number(product.quantity || 0) <= 0;
-
-                return (
-                  <article key={product.id} className={`pdv-product-card${unavailable ? " disabled" : ""}`}>
-                    <div className="pdv-product-meta">
-                      <strong>{product.name}</strong>
-                      <p>{product.category}</p>
-                      <small>SKU {product.sku}</small>
-                    </div>
-
-                    <div className="pdv-product-footline">
-                      <span className={`stock-pill${Number(product.quantity) <= Number(product.minStock) ? " low" : ""}`}>
-                        {product.quantity} em estoque
-                      </span>
-                      <strong>{formatCurrency(product.salePrice)}</strong>
-                    </div>
-
-                    <button
-                      type="button"
-                      className="primary-button full-button"
-                      onClick={() => addToCart(product)}
-                      disabled={unavailable}
-                    >
-                      {unavailable ? "Sem saldo" : "Adicionar ao carrinho"}
-                    </button>
-                  </article>
-                );
-              })
-            ) : (
-              <EmptyState title="Nenhum produto encontrado" description="Ajuste a busca ou cadastre novos itens no estoque." />
-            )}
+      {isMobile ? (
+        <>
+          <div className="pdv-steps">
+            <button type="button" className={`pdv-step${mobileStep === "produtos" ? " active" : ""}`} onClick={() => setMobileStep("produtos")}>Produtos</button>
+            <button type="button" className={`pdv-step${mobileStep === "carrinho" ? " active" : ""}`} onClick={() => setMobileStep("carrinho")}>Carrinho</button>
+            <button type="button" className={`pdv-step${mobileStep === "pagamento" ? " active" : ""}`} onClick={() => setMobileStep("pagamento")}>Pagamento</button>
           </div>
-        </Panel>
-
-        <Panel title="Carrinho" description="Itens da venda com controle rapido de quantidade.">
-          {cart.length ? (
-            <div className="cart-list">
-              {cart.map((item) => (
-                <article key={item.inventoryId} className="cart-item">
-                  <div className="cart-item-main">
-                    <strong>{item.name}</strong>
-                    <span>{formatCurrency(item.unitPrice)} cada</span>
-                  </div>
-
-                  <div className="cart-item-actions">
-                    <div className="qty-controls">
-                      <button type="button" className="small-button" onClick={() => updateQuantity(item.inventoryId, -1)}>-</button>
-                      <strong>{item.quantity}</strong>
-                      <button type="button" className="small-button" onClick={() => updateQuantity(item.inventoryId, 1)}>+</button>
-                    </div>
-
-                    <div className="cart-subtotal">
-                      <span>Subtotal</span>
-                      <strong>{formatCurrency(item.subtotal)}</strong>
-                    </div>
-
-                    <button type="button" className="ghost-button" onClick={() => removeItem(item.inventoryId)}>
-                      Excluir
-                    </button>
-                  </div>
-                </article>
-              ))}
-
-              <div className="cart-total-row">
-                <span>Total geral</span>
-                <strong>{formatCurrency(total)}</strong>
-              </div>
-            </div>
-          ) : (
-            <EmptyState title="Carrinho vazio" description="Toque em um produto para simular a venda no balcao." />
-          )}
-        </Panel>
-
-        <Panel title="Resumo da venda" description="Fechamento rapido com forma de pagamento.">
-          <div className="pdv-summary">
-            <label>
-              Cliente
-              <input
-                value={customerName}
-                onChange={(event) => setCustomerName(event.target.value)}
-                placeholder="Nome do cliente ou Cliente de balcao"
-              />
-            </label>
-
-            <div className="payment-block">
-              <span className="field-title">Forma de pagamento</span>
-              <div className="payment-grid">
-                {paymentOptions.map((option) => (
-                  <label key={option} className={`payment-option${paymentMethod === option ? " selected" : ""}`}>
-                    <input
-                      type="radio"
-                      name="paymentMethod"
-                      value={option}
-                      checked={paymentMethod === option}
-                      onChange={(event) => setPaymentMethod(event.target.value)}
-                    />
-                    <span>{option}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            <label>
-              Desconto
-              <input type="number" min="0" step="0.01" value={discount} onChange={(event) => setDiscount(event.target.value)} />
-            </label>
-
-            <div className="summary-lines">
-              <div><span>Subtotal</span><strong>{formatCurrency(subtotal)}</strong></div>
-              <div><span>Desconto</span><strong>{formatCurrency(discountValue)}</strong></div>
-              <div className="summary-total"><span>Total</span><strong>{formatCurrency(total)}</strong></div>
-            </div>
-
-            <button type="button" className="primary-button full-button pdv-finish-button" onClick={submitSale} disabled={!cart.length}>
-              Finalizar venda
-            </button>
+          {mobileStep === "produtos" && productsPanel}
+          {mobileStep === "carrinho" && cartPanel}
+          {mobileStep === "pagamento" && paymentPanel}
+        </>
+      ) : (
+        <div className="pdv-layout">
+          {productsPanel}
+          <div className="page-stack">
+            {cartPanel}
+            {paymentPanel}
           </div>
-        </Panel>
-      </div>
+        </div>
+      )}
 
-      <Panel title="Historico de vendas" description="Resumo simples para navegacao comercial durante a apresentacao.">
+      <Panel title="Ultimas vendas" description={isMobile ? "Historico" : "Resumo simples para navegacao comercial durante a apresentacao."}>
         <DataTable
           columns={[
             { key: "number", label: "Numero" },
@@ -282,6 +306,13 @@ export default function PdvPage({ db, onCheckout }) {
             { key: "date", label: "Data", render: (row) => formatDateTime(`${row.date}T${row.time || "12:00:00"}`) }
           ]}
           rows={db.sales}
+          mobileCards={(row) => (
+            <article className="mobile-record-card">
+              <strong>{row.number}</strong>
+              <p>{row.customerName}</p>
+              <span>{formatCurrency(row.total)} • {row.paymentMethod}</span>
+            </article>
+          )}
           empty={<EmptyState title="Nenhuma venda registrada" description="Finalize uma venda para alimentar o historico do PDV." />}
         />
       </Panel>

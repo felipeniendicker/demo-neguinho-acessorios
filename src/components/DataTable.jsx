@@ -1,28 +1,32 @@
-export default function DataTable({ columns, rows, empty }) {
+export default function DataTable({ columns, rows, empty, mobileCards }) {
   if (!rows.length) {
     return empty;
   }
 
   return (
-    <div className="table-wrap">
-      <table className="table">
-        <thead>
-          <tr>
-            {columns.map((column) => (
-              <th key={column.key}>{column.label}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((row, index) => (
-            <tr key={row.id || index}>
+    <>
+      <div className="table-wrap">
+        <table className="table">
+          <thead>
+            <tr>
               {columns.map((column) => (
-                <td key={column.key}>{column.render ? column.render(row) : row[column.key]}</td>
+                <th key={column.key}>{column.label}</th>
               ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody>
+            {rows.map((row, index) => (
+              <tr key={row.id || index}>
+                {columns.map((column) => (
+                  <td key={column.key}>{column.render ? column.render(row) : row[column.key]}</td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {mobileCards && <div className="mobile-record-list">{rows.map((row, index) => <div key={row.id || index}>{mobileCards(row)}</div>)}</div>}
+    </>
   );
 }

@@ -2,10 +2,10 @@ export default function Footer({ compact = false }) {
   return (
     <footer className={`app-footer${compact ? " compact" : ""}`}>
       <div>
-        <strong>Neguinho Acessórios</strong>
-        <span>Sistema demonstrativo para gestão de oficinas e motopeças.</span>
+        <strong>Neguinho Acessorios</strong>
+        <span>Sistema demonstrativo para oficinas e motopecas.</span>
       </div>
-      <p>Versão demonstrativa preparada para apresentação comercial.</p>
+      <p>Versao demonstrativa.</p>
     </footer>
   );
 }

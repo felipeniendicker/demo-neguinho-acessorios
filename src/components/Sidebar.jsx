@@ -12,7 +12,7 @@ export default function Sidebar({ items, settings, isMobileOpen = false, onClose
 
       <aside className={`sidebar${isMobileOpen ? " is-open" : ""}`}>
         <div className="sidebar-mobile-head">
-          <span>Menu</span>
+          <strong>Neguinho Acessorios</strong>
           <button type="button" className="mobile-close-button" onClick={onClose}>
             Fechar
           </button>
@@ -20,7 +20,7 @@ export default function Sidebar({ items, settings, isMobileOpen = false, onClose
 
         <div className="brand">
           <div className="brand-logo brand-logo-text">
-            {settings.logoText || "Neguinho Acessórios"}
+            {settings.logoText || "Neguinho Acessorios"}
           </div>
           <div>
             <h1>{settings.shopName}</h1>
@@ -46,8 +46,8 @@ export default function Sidebar({ items, settings, isMobileOpen = false, onClose
         </nav>
 
         <div className="sidebar-card">
-          <span className="kicker">Pronto para apresentar</span>
-          <strong>Fluxo completo de oficina, estoque, financeiro e relatórios.</strong>
+          <span className="kicker">Demo comercial</span>
+          <strong>Fluxo completo de oficina.</strong>
         </div>
       </aside>
     </>

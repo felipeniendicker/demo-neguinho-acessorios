@@ -1,7 +1,10 @@
 import { useMemo, useState } from "react";
 import DataTable from "../components/DataTable.jsx";
 import EmptyState from "../components/EmptyState.jsx";
+import MobileFormDrawer from "../components/MobileFormDrawer.jsx";
+import MobileModuleHeader from "../components/MobileModuleHeader.jsx";
 import Panel from "../components/Panel.jsx";
+import useIsMobile from "../hooks/useIsMobile.js";
 import { formatPlate, normalizeText } from "../utils/formatters.js";
 
 const blank = {
@@ -19,6 +22,8 @@ const blank = {
 export default function BikesPage({ db, helpers, onSave, onDelete }) {
   const [form, setForm] = useState(blank);
   const [search, setSearch] = useState("");
+  const [mobileFormOpen, setMobileFormOpen] = useState(false);
+  const isMobile = useIsMobile();
 
   const rows = useMemo(() => {
     const query = normalizeText(search);
@@ -32,8 +37,19 @@ export default function BikesPage({ db, helpers, onSave, onDelete }) {
     });
   }, [db.bikes, helpers, search]);
 
+  function openNew() {
+    setForm(blank);
+    setMobileFormOpen(true);
+  }
+
   function reset() {
     setForm(blank);
+    setMobileFormOpen(false);
+  }
+
+  function editBike(row) {
+    setForm(row);
+    setMobileFormOpen(true);
   }
 
   function submit(event) {
@@ -42,33 +58,46 @@ export default function BikesPage({ db, helpers, onSave, onDelete }) {
     reset();
   }
 
+  const formContent = (
+    <form className="form-grid" onSubmit={submit}>
+      <label>Cliente
+        <select value={form.customerId} onChange={(e) => setForm((c) => ({ ...c, customerId: e.target.value }))} required>
+          <option value="">Selecione</option>
+          {db.customers.map((customer) => <option key={customer.id} value={customer.id}>{customer.name}</option>)}
+        </select>
+      </label>
+      <label>Marca<input value={form.brand} onChange={(e) => setForm((c) => ({ ...c, brand: e.target.value }))} required /></label>
+      <label>Modelo<input value={form.model} onChange={(e) => setForm((c) => ({ ...c, model: e.target.value }))} required /></label>
+      <label>Ano<input value={form.year} onChange={(e) => setForm((c) => ({ ...c, year: e.target.value }))} required /></label>
+      <label>Placa<input value={form.plate} onChange={(e) => setForm((c) => ({ ...c, plate: formatPlate(e.target.value) }))} required /></label>
+      <label>Cor<input value={form.color} onChange={(e) => setForm((c) => ({ ...c, color: e.target.value }))} /></label>
+      <label>Quilometragem<input value={form.mileage} onChange={(e) => setForm((c) => ({ ...c, mileage: e.target.value }))} /></label>
+      <label className="wide">Observacoes<textarea value={form.notes} onChange={(e) => setForm((c) => ({ ...c, notes: e.target.value }))} rows={4} /></label>
+      <div className="actions wide">
+        {form.id && <button type="button" className="ghost-button" onClick={reset}>Cancelar</button>}
+        <button type="submit" className="primary-button">{form.id ? "Salvar alteracoes" : "Cadastrar moto"}</button>
+      </div>
+    </form>
+  );
+
   return (
     <div className="page-stack">
-      <Panel title={form.id ? "Editar moto" : "Nova moto"} description="Cadastro tecnico com vinculo ao cliente.">
-        <form className="form-grid" onSubmit={submit}>
-          <label>Cliente
-            <select value={form.customerId} onChange={(e) => setForm((c) => ({ ...c, customerId: e.target.value }))} required>
-              <option value="">Selecione</option>
-              {db.customers.map((customer) => <option key={customer.id} value={customer.id}>{customer.name}</option>)}
-            </select>
-          </label>
-          <label>Marca<input value={form.brand} onChange={(e) => setForm((c) => ({ ...c, brand: e.target.value }))} required /></label>
-          <label>Modelo<input value={form.model} onChange={(e) => setForm((c) => ({ ...c, model: e.target.value }))} required /></label>
-          <label>Ano<input value={form.year} onChange={(e) => setForm((c) => ({ ...c, year: e.target.value }))} required /></label>
-          <label>Placa<input value={form.plate} onChange={(e) => setForm((c) => ({ ...c, plate: formatPlate(e.target.value) }))} required /></label>
-          <label>Cor<input value={form.color} onChange={(e) => setForm((c) => ({ ...c, color: e.target.value }))} /></label>
-          <label>Quilometragem<input value={form.mileage} onChange={(e) => setForm((c) => ({ ...c, mileage: e.target.value }))} /></label>
-          <label className="wide">Observacoes<textarea value={form.notes} onChange={(e) => setForm((c) => ({ ...c, notes: e.target.value }))} rows={4} /></label>
-          <div className="actions wide">
-            {form.id && <button type="button" className="ghost-button" onClick={reset}>Cancelar</button>}
-            <button type="submit" className="primary-button">{form.id ? "Salvar alteracoes" : "Cadastrar moto"}</button>
-          </div>
-        </form>
-      </Panel>
+      <MobileModuleHeader
+        title="Motos"
+        subtitle="Cadastre e consulte motos."
+        actionLabel="+ Nova moto"
+        onAction={openNew}
+      />
+
+      {!isMobile && (
+        <Panel title={form.id ? "Editar moto" : "Nova moto"} description="Cadastro tecnico com vinculo ao cliente.">
+          {formContent}
+        </Panel>
+      )}
 
       <Panel
         title="Motos cadastradas"
-        description="Busca por cliente, placa, modelo ou marca."
+        description={isMobile ? "Lista de motos" : "Busca por cliente, placa, modelo ou marca."}
         action={<input className="search-input" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Buscar moto" />}
       >
         <DataTable
@@ -83,16 +112,33 @@ export default function BikesPage({ db, helpers, onSave, onDelete }) {
               label: "Acoes",
               render: (row) => (
                 <div className="row-actions">
-                  <button type="button" className="secondary-button" onClick={() => setForm(row)}>Editar</button>
+                  <button type="button" className="secondary-button" onClick={() => editBike(row)}>Editar</button>
                   <button type="button" className="danger-button" onClick={() => onDelete(row.id)}>Excluir</button>
                 </div>
               )
             }
           ]}
           rows={rows}
+          mobileCards={(row) => (
+            <article className="mobile-record-card">
+              <strong>{row.brand} {row.model}</strong>
+              <p>{helpers.customerName(row.customerId)}</p>
+              <span>{row.plate} • {row.mileage || "Km nao informado"}</span>
+              <div className="mobile-record-actions">
+                <button type="button" className="secondary-button" onClick={() => editBike(row)}>Editar</button>
+                <button type="button" className="danger-button" onClick={() => onDelete(row.id)}>Excluir</button>
+              </div>
+            </article>
+          )}
           empty={<EmptyState title="Nenhuma moto encontrada" description="Cadastre motos para exibir o historico tecnico." />}
         />
       </Panel>
+
+      {isMobile && (
+        <MobileFormDrawer open={mobileFormOpen} title={form.id ? "Editar moto" : "Nova moto"} onClose={reset}>
+          {formContent}
+        </MobileFormDrawer>
+      )}
     </div>
   );
 }
