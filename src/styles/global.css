@@ -37,9 +37,7 @@ body,
 }
 
 body {
-  background:
-    radial-gradient(circle at top left, rgba(198, 31, 31, 0.08), transparent 20%),
-    linear-gradient(180deg, #ffffff 0%, #fafafa 100%);
+  background: linear-gradient(180deg, #ffffff 0%, #fafafa 100%);
   color: var(--text);
   overflow-x: hidden;
 }
@@ -334,7 +332,7 @@ textarea:focus {
 .login-card::before,
 .dashboard-hero::before,
 .landing-feature-band::before {
-  background: radial-gradient(circle at top left, rgba(198, 31, 31, 0.08), transparent 42%);
+  background: transparent;
   content: "";
   inset: 0;
   pointer-events: none;
@@ -467,7 +465,7 @@ textarea:focus {
 }
 
 .dashboard-hero {
-  background: linear-gradient(135deg, rgba(198, 31, 31, 0.08), rgba(17, 17, 17, 0.03));
+  background: #ffffff;
   border-radius: var(--radius-lg);
   display: grid;
   gap: 1.15rem;
@@ -779,9 +777,7 @@ textarea:focus {
 }
 
 .empty-state {
-  background:
-    radial-gradient(circle at top, rgba(198, 31, 31, 0.08), transparent 26%),
-    linear-gradient(180deg, #ffffff, #fafafa);
+  background: linear-gradient(180deg, #ffffff, #fafafa);
   border: 1px dashed #d8d8dc;
   border-radius: var(--radius-md);
   padding: 2.4rem 1.4rem;
@@ -853,7 +849,7 @@ textarea:focus {
 }
 
 .pdv-product-card {
-  background: linear-gradient(180deg, #ffffff, #fcfcfc);
+  background: #ffffff;
   border: 1px solid var(--border);
   border-radius: 22px;
   color: var(--text);
@@ -1010,7 +1006,7 @@ textarea:focus {
 
 .catalog-hero {
   align-items: center;
-  background: linear-gradient(135deg, rgba(198, 31, 31, 0.08), rgba(17, 17, 17, 0.03));
+  background: #ffffff;
   border: 1px solid var(--border);
   border-radius: 24px;
   display: flex;
@@ -1059,9 +1055,7 @@ textarea:focus {
 
 .public-shell {
   align-items: center;
-  background:
-    radial-gradient(circle at top left, rgba(198, 31, 31, 0.08), transparent 24%),
-    linear-gradient(180deg, #ffffff 0%, #fafafa 100%);
+  background: linear-gradient(180deg, #ffffff 0%, #fafafa 100%);
   display: flex;
   flex-direction: column;
   min-height: 100vh;
@@ -1071,6 +1065,59 @@ textarea:focus {
 .landing-shell,
 .login-shell {
   justify-content: space-between;
+}
+
+.landing-minimal {
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  display: grid;
+  gap: 1rem;
+  justify-items: center;
+  margin: 4rem auto 2rem;
+  max-width: 760px;
+  padding: 2.6rem 2.2rem;
+  text-align: center;
+  width: 100%;
+}
+
+.landing-minimal h1,
+.landing-minimal h2,
+.landing-minimal p {
+  margin: 0;
+}
+
+.landing-minimal h1 {
+  font-size: clamp(2.6rem, 4vw, 4.2rem);
+  line-height: 0.96;
+}
+
+.landing-minimal h2 {
+  font-size: clamp(1.25rem, 2vw, 1.75rem);
+  max-width: 580px;
+}
+
+.landing-minimal p {
+  color: var(--muted);
+  max-width: 620px;
+}
+
+.landing-mini-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  justify-content: center;
+}
+
+.landing-mini-pill {
+  background: #f5f5f6;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 0.86rem;
+  font-weight: 700;
+  padding: 0.45rem 0.8rem;
 }
 
 .landing-hero,
@@ -1171,9 +1218,7 @@ textarea:focus {
 }
 
 .login-showcase {
-  background:
-    radial-gradient(circle at top left, rgba(198, 31, 31, 0.08), transparent 26%),
-    linear-gradient(180deg, #ffffff, #fbfbfb);
+  background: linear-gradient(180deg, #ffffff, #fbfbfb);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -1248,7 +1293,7 @@ textarea:focus {
 
 .landing-feature-band {
   align-items: start;
-  background: linear-gradient(180deg, #ffffff, #fbfbfb);
+  background: #ffffff;
   border-radius: var(--radius-lg);
   display: grid;
   gap: 1.4rem;
@@ -1821,6 +1866,16 @@ textarea:focus {
     padding: 1.45rem;
   }
 
+  .landing-minimal {
+    gap: 0.85rem;
+    margin: 1rem auto 1.4rem;
+    padding: 1.7rem 1.2rem;
+  }
+
+  .landing-mini-list {
+    gap: 0.5rem;
+  }
+
   .public-shell {
     padding: 1rem;
   }
@@ -1897,6 +1952,10 @@ textarea:focus {
 }
 
 @media (min-width: 769px) {
+  .landing-shell {
+    justify-content: center;
+  }
+
   .landing-hero {
     align-items: start;
     gap: 1.4rem;
