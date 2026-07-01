@@ -1701,6 +1701,7 @@ body.mobile-menu-open .menu-fab {
 
   .sidebar-backdrop,
   .mobile-overlay {
+    display: block;
     background: rgba(17, 17, 17, 0.45);
     backdrop-filter: blur(2px);
     border: 0;
@@ -1723,6 +1724,7 @@ body.mobile-menu-open .menu-fab {
 
   .sidebar,
   .mobile-drawer {
+    animation: none;
     border-radius: 0 24px 24px 0;
     box-shadow: 0 20px 40px rgba(17, 17, 17, 0.16);
     height: 100dvh;
