@@ -1405,7 +1405,7 @@ textarea:focus {
   transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
 }
 
-.mobile-menu-button.is-open,
+.mobile-menu-toggle,
 .drawer-close {
   background: var(--red);
   color: #ffffff;
@@ -1472,8 +1472,19 @@ textarea:focus {
 }
 
 .drawer-close {
+  display: flex !important;
   font-size: 1.5rem;
   line-height: 1;
+}
+
+body.mobile-menu-open .mobile-menu-toggle,
+body.mobile-menu-open .mobile-header-menu,
+body.mobile-menu-open .hamburger,
+body.mobile-menu-open .floating-menu-button,
+body.mobile-menu-open .mobile-fab,
+body.mobile-menu-open .fab,
+body.mobile-menu-open .menu-fab {
+  display: none !important;
 }
 
 .print-sheet {

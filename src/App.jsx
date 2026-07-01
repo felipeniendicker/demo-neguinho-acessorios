@@ -111,13 +111,16 @@ export default function App() {
 
     if (mobileMenuOpen) {
       document.body.style.overflow = "hidden";
+      document.body.classList.add("mobile-menu-open");
       window.addEventListener("keydown", handleEscape);
     } else {
       document.body.style.overflow = "";
+      document.body.classList.remove("mobile-menu-open");
     }
 
     return () => {
       document.body.style.overflow = "";
+      document.body.classList.remove("mobile-menu-open");
       window.removeEventListener("keydown", handleEscape);
     };
   }, [mobileMenuOpen]);
@@ -662,20 +665,22 @@ export default function App() {
               />
 
               <main className="main-shell">
-                <div className={`mobile-topbar mobile-header${mobileMenuOpen ? " is-menu-open" : ""}`}>
+                <div className="mobile-topbar mobile-header">
                   <div className="mobile-topbar-brand">
                     <strong>Neguinho Acessórios</strong>
                     <span>Sistema de gestao</span>
                   </div>
-                  <button
-                    type="button"
-                    className={`mobile-menu-button${mobileMenuOpen ? " is-open" : ""}`}
-                    onClick={() => setMobileMenuOpen((current) => !current)}
-                    aria-label={mobileMenuOpen ? "Fechar menu" : "Abrir menu"}
-                    aria-expanded={mobileMenuOpen}
-                  >
-                    {mobileMenuOpen ? "×" : "☰"}
-                  </button>
+                  {!mobileMenuOpen && (
+                    <button
+                      type="button"
+                      className="mobile-menu-button mobile-menu-toggle"
+                      onClick={() => setMobileMenuOpen(true)}
+                      aria-label="Abrir menu"
+                      aria-expanded="false"
+                    >
+                      {"\u2630"}
+                    </button>
+                  )}
                 </div>
 
                 <Header
