@@ -690,16 +690,18 @@ export default function App() {
                   </button>
                 </div>
 
-                <button
-                  type="button"
-                  className={`mobile-fab${isNearTop ? " is-near-top" : ""}${mobileMenuOpen ? " is-open" : ""}`}
-                  onClick={() => setMobileMenuOpen((current) => !current)}
-                  aria-label={mobileMenuOpen ? "Fechar menu" : "Abrir menu"}
-                >
-                  <span />
-                  <span />
-                  <span />
-                </button>
+                {!mobileMenuOpen && (
+                  <button
+                    type="button"
+                    className={`mobile-fab${isNearTop ? " is-near-top" : ""}`}
+                    onClick={() => setMobileMenuOpen(true)}
+                    aria-label="Abrir menu"
+                  >
+                    <span />
+                    <span />
+                    <span />
+                  </button>
+                )}
 
                 <Header
                   title={title}
